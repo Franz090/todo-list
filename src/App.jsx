@@ -4,11 +4,12 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+import ErrorBoundary from './pages/ErrorBoundary';
 function App() {
  
   return (
     <Router>
-    <Routes>
+     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
