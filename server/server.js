@@ -1,8 +1,20 @@
 const express = require('express')
-const app = express()
+const cors = require('cors')
 
-app.get('/', function (req, res) {
+const app = express()
+app.use(cors()) // Enable CORS
+
+app.get('/', (req, res) => {
   res.send('Server started on Port 4000')
 })
+//test the api 
+app.get('/users', (req, res) => {
+  res.json([
+    { id: 1, name: 'Juan' },
+    { id: 2, name: 'Maria' }
+  ])
+})
 
-app.listen(4000,()=> {console.log("Server started on port 4000")})
+app.listen(4000, () => {
+  console.log('Server started on port 4000')
+})
