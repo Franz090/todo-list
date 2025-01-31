@@ -1,12 +1,22 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function Login() {
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+  
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    // Handle login logic here, like sending a request to an API
+    console.log("Email:", email);
+    console.log("Password:", password);
+  };
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleLoginSubmit}>
           {/* Email Input */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
@@ -14,6 +24,8 @@ export default function Login() {
               type="email"
               id="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -23,11 +35,13 @@ export default function Login() {
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             type="password"
+             id="password"
+             name="password"
+             value={password}
+             onChange={(e) => setPassword(e.target.value)}
+             required
+             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 

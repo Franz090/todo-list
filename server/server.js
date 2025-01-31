@@ -1,15 +1,20 @@
-const express = require('express')
-const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://francisoblepias7:halconWinter_11011@cluster0.nnicl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+import dotenv from 'dotenv';
+dotenv.config(); 
+import express from 'express';
+import cors from 'cors';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
-const app = express()
-app.use(cors()) // Enable CORS
+const uri = process.env.MONGODB_URI;
 
-app.get('/', (req, res) => {
-  res.send('Server started on Port 4000')
-})
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+if (!uri) {
+  console.error("❌ ERROR: MONGODB_URI is not defined. Check your .env file.");
+  process.exit(1); // Tumigil agad kung walang connection string
+}
+console.log("🔍 MONGODB_URI:", process.env.MONGODB_URI); // Debug log
+
+const app = express();
+app.use(cors());
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -17,22 +22,22 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
-async function run() {
+
+async function connectDB() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    console.log("✅ Connected to MongoDB!");
+  } catch (error) {
+    console.error("❌ MongoDB connection error:", error);
   }
 }
-run().catch(console.dir);
-//test the api 
 
+connectDB();
+
+app.get('/', (req, res) => {
+  res.send('Server started on Port 4000');
+});
 
 app.listen(4000, () => {
-  console.log('Server started on port 4000')
-})
+  console.log('🚀 Server started on port 4000');
+});

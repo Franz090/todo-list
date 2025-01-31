@@ -1,12 +1,38 @@
 import { Link } from "react-router-dom";
+import {useState} from "react";
 
 export default function Register() {
+    const [firstName,setFirstName] = useState("");
+    const [lastName,setLastName] = useState("");
+    const [email,setEmail] = useState("");
+    const [password,setPassword] = useState("");
+    const [confirmPassword,setConfirmPassword] = useState("");
+    const [error, setError] = useState('');
+
+    const handleRegisterSubmit = (e) => {
+        e.preventDefault();
+        // Handle login logic here, like sending a request to an API
+        console.log("First Name:", firstName);
+        console.log("Last Name:", lastName);
+        console.log("Email:", email);
+        console.log("Password:", password);
+        console.log("Confirm Password:", confirmPassword);
+
+        if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+          }
+      
+          setError('');
+          // Proceed with form submission or further actions
+          alert('Form submitted');
+      };
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-6">Register</h1>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleRegisterSubmit} >
           {/* First Name Input */}
           <div>
             <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
@@ -14,6 +40,8 @@ export default function Register() {
               type="text"
               id="firstName"
               name="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               required
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -26,6 +54,8 @@ export default function Register() {
               type="text"
               id="lastName"
               name="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               required
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -38,6 +68,8 @@ export default function Register() {
               type="email"
               id="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -50,6 +82,8 @@ export default function Register() {
               type="password"
               id="password"
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -62,6 +96,8 @@ export default function Register() {
               type="password"
               id="confirmPassword"
               name="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -69,6 +105,7 @@ export default function Register() {
 
           {/* Submit Button */}
           <div>
+          {error && (<div className="text-center text-red-500 mt-2">{error}</div>)}
             <button
               type="submit"
               className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
