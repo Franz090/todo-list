@@ -1,4 +1,4 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config(); // Ensure the environment variables are loaded
@@ -11,22 +11,15 @@ if (!uri) {
   process.exit(1); // Stop the application if there's no MongoDB URI
 }
 
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-
 async function connectDB() {
   try {
-    await client.connect();
-    console.log("✅ Connected to MongoDB!");
+    // Connect to MongoDB using mongoose (no need for useNewUrlParser and useUnifiedTopology)
+    await mongoose.connect(uri);
+    console.log("✅ Connected to MongoDB using Mongoose!");
   } catch (error) {
     console.error("❌ MongoDB connection error:", error);
     process.exit(1); // Stop the application if the DB connection fails
   }
 }
 
-export { connectDB, client };
+export { connectDB };
