@@ -14,12 +14,7 @@ app.get('/', (req, res) => {
 app.use('/api', userRoutes);
 
 
-
-
-
-
-
 app.listen(4000, async () => {
-    connectDB(); 
-    console.log('🚀 Server started on port 4000');
+  await connectDB(); // Siguraduhin na connected muna ang database
+  console.log('🚀 Server started on port 4000');
 });
