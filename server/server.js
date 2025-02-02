@@ -14,17 +14,8 @@ app.get('/', (req, res) => {
 // Use API routes
 app.use('/api', userRoutes);
 
-// **Ensure database is connected first before starting the server**
-async function startServer() {
-  try {
-    await connectDB(); // Hintayin muna ang database connection
-    app.listen(4000, () => {
-      console.log('🚀 Server started on port 4000');
-    });
-  } catch (error) {
-    console.error('❌ Failed to connect to database. Server will not start.');
-    process.exit(1);
-  }
-}
+app.listen(4000, async () => {
+  await connectDB(); // Siguraduhin na connected muna ang database
+  console.log('🚀 Server started on port 4000');
+});
 
-startServer();
