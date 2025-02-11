@@ -1,32 +1,15 @@
 import { Link } from "react-router-dom";
-import {useState} from "react";
+import useAuth from "../hooks/useAuth";
 
 export default function Register() {
-    const [firstName,setFirstName] = useState("");
-    const [lastName,setLastName] = useState("");
-    const [email,setEmail] = useState("");
-    const [password,setPassword] = useState("");
-    const [confirmPassword,setConfirmPassword] = useState("");
-    const [error, setError] = useState('');
+  const {firstName, setFirstName,
+    lastName, setLastName,
+    email, setEmail,
+    password, setPassword,
+    confirmPassword, setConfirmPassword,
+    error, handleRegisterSubmit
+  } = useAuth();
 
-    const handleRegisterSubmit = (e) => {
-        e.preventDefault();
-        // Handle login logic here, like sending a request to an API
-        console.log("First Name:", firstName);
-        console.log("Last Name:", lastName);
-        console.log("Email:", email);
-        console.log("Password:", password);
-        console.log("Confirm Password:", confirmPassword);
-
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
-            return;
-          }
-      
-          setError('');
-          // Proceed with form submission or further actions
-          alert('Form submitted');
-      };
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">

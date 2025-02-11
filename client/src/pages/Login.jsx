@@ -1,16 +1,10 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 export default function Login() {
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
+  const { email, setEmail, password, setPassword, handleLoginSubmit } = useAuth();
   
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    // Handle login logic here, like sending a request to an API
-    console.log("Email:", email);
-    console.log("Password:", password);
-  };
+  
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
