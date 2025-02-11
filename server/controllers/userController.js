@@ -1,5 +1,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js'; // Assuming you have a User model defined
+import jwt from 'jsonwebtoken';
+
 
 
 export const createUser = async (req, res) => {
@@ -79,8 +81,19 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Send success response
-        return res.status(200).json({ message: 'Login successful', user: { email } });
+        // Generate JWT Token
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } // Token expires in 1 hour
+        );
+
+        // Send success response with token
+        return res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: { id: user._id, email: user.email }
+        });
 
     } catch (error) {
         return res.status(500).json({ message: 'Error logging in', error });
