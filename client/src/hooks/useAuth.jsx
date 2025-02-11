@@ -24,8 +24,10 @@ const useAuth = () => {
 
     if (password !== confirmPassword) {
       setError("Passwords do not match!");
-      return;
+    } else {
+      setError("Passwords match!");
     }
+    
 
     console.log("Registering:", { firstName, lastName, email, password });
     // Add API call for registration here

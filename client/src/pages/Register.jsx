@@ -88,14 +88,20 @@ export default function Register() {
 
           {/* Submit Button */}
           <div>
-          {error && (<div className="text-center text-red-500 mt-2">{error}</div>)}
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              Register
-            </button>
-          </div>
+  {error && (
+    <div className={`text-center mt-2 ${error === "Passwords do not match!" ? "text-red-500" : "text-green-500"}`}>
+      {error}
+    </div>
+  )}
+  
+  <button
+    type="submit"
+    className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+  >
+    Register
+  </button>
+</div>
+
         </form>
 
         {/* Login Link */}
