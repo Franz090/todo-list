@@ -1,16 +1,28 @@
-import { Link } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 
 export default function Login() {
-  const { email, setEmail, password, setPassword, handleLoginSubmit } = useAuth();
-  
-  
+  const { email, setEmail, password, setPassword, handleLoginSubmit } = useAuthContext();
+  const navigate = useNavigate(); // <-- Import useNavigate
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Example condition: check if email and password are valid
+    if (email === "test@example.com" && password === "password123") {
+      console.log("Login successful!");
+      navigate("/home"); // <-- Redirect to Home page
+    } else {
+      console.log("Invalid email or password");
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
-        <form className="space-y-4" onSubmit={handleLoginSubmit}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Email Input */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
@@ -29,13 +41,13 @@ export default function Login() {
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
-             type="password"
-             id="password"
-             name="password"
-             value={password}
-             onChange={(e) => setPassword(e.target.value)}
-             required
-             className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
