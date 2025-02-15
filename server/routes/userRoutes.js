@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/register', createUser);
 router.post('/login', loginUser);
-router.post('/logout', logoutUser); 
+router.post('/logout', authMiddleware, logoutUser);
 router.get('/dashboard', authMiddleware, (req, res) => {
     res.json({ message: "Welcome to the dashboard!", user: req.user });
 });
