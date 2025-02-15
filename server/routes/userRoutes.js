@@ -10,7 +10,7 @@ router.post('/logout', authMiddleware, logoutUser);
 router.get('/dashboard', authMiddleware, (req, res) => {
     res.json({ message: "Welcome to the dashboard!", user: req.user });
 });
-router.put('/update/:id', authMiddleware, updateUser); 
-router.delete('/delete/:id', authMiddleware, deleteUser); 
+router.put('/update/:id', authMiddleware, updateUser);
+router.delete('/delete/:id', authMiddleware, deleteUser);
 
 export default router;

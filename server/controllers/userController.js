@@ -2,6 +2,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import mongoose from 'mongoose'; 
+import dotenv from 'dotenv';
+
+dotenv.config(); // Ensure environment variables are loaded
 
 // Register User
 export const createUser = async (req, res, next) => {
@@ -44,6 +47,12 @@ export const loginUser = async (req, res, next) => {
 
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict'
+        });
+
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         next(error);
@@ -52,20 +61,24 @@ export const loginUser = async (req, res, next) => {
 
 // Logout User
 export const logoutUser = async (req, res) => {
-    res.status(200).json({ message: 'Logged out successfully' });
+    try {
+        res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Strict' });
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Logout failed', error: error.message });
+    }
 };
 
 // Update User
 export const updateUser = async (req, res) => {
     const { id } = req.params;
 
-    
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: "Invalid User ID" });
     }
 
     try {
-        const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
+        const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
         if (!updatedUser) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -75,10 +88,10 @@ export const updateUser = async (req, res) => {
     }
 };
 
+// Delete User
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
 
-    
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: "Invalid User ID" });
     }
