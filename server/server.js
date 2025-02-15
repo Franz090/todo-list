@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
+import { errorHandler } from './middleware/errorMiddleware.js';
 
 // Load Environment Variables
 dotenv.config();
@@ -14,12 +15,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Connect to Database
+connectDB().then(() => console.log('✅ Database connected successfully')).catch(err => {
+  console.error('❌ Database connection error:', err);
+  process.exit(1); // Exit process if DB connection fails
+});
+
 // Routes
-app.get('/', (req, res) => res.send('Server started on Port 4000'));
+app.get('/', (req, res) => res.send('🚀 Server is running!'));
 app.use('/api', userRoutes);
 
-// Start Server
-app.listen(4000, async () => {
-  await connectDB();
-  console.log('🚀 Server started on port 4000');
-});
+// Global Error Handler
+app.use(errorHandler)
+
+
+// Set Port from .env or Default to 4000
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`🚀 Server started on port ${PORT}`));

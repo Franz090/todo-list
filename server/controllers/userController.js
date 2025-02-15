@@ -1,101 +1,95 @@
 import bcrypt from 'bcryptjs';
-import User from '../models/User.js'; // Assuming you have a User model defined
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
+import mongoose from 'mongoose'; 
 
-
-
-export const createUser = async (req, res) => {
-    const { firstName, lastName, email, password, confirmPassword } = req.body;
-
-    // Validation: Ensure no fields are blank
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
-        return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    // Email validation (basic example)
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (!emailRegex.test(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
-    }
-
-    // Password and Confirm Password match validation
-    if (password !== confirmPassword) {
-        return res.status(400).json({ message: 'Passwords do not match' });
-    }
-
+// Register User
+export const createUser = async (req, res, next) => {
     try {
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User with this email already exists' });
+        const { firstName, lastName, email, password, confirmPassword } = req.body;
+        
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
+            return res.status(400).json({ message: 'All fields are required' });
         }
 
-        // Hash the password using bcryptjs
-        const salt = await bcrypt.genSalt(10); // Generate salt
-        const hashedPassword = await bcrypt.hash(password, salt); // Hash the password
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: 'Passwords do not match' });
+        }
 
-        // Create a new user and save to the database
-        const newUser = new User({
-            firstName,
-            lastName,
-            email,
-            password: hashedPassword,
-        });
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
 
-        await newUser.save(); // Save user to the database
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ firstName, lastName, email, password: hashedPassword });
 
-        return res.status(201).json({
-            message: 'User created successfully',
-            user: { firstName, lastName, email }
-        });
-
+        await newUser.save();
+        res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
-        console.error("Error creating user:", error); // Log the error to the console
-        return res.status(500).json({ message: 'Error creating user', error: error.message });
+        next(error);
     }
 };
 
-// Login user logic
-export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+// Login User
+export const loginUser = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
 
-    // Validation for email and password
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required' });
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
+        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(200).json({ message: 'Login successful', token });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Logout User
+export const logoutUser = async (req, res) => {
+    res.status(200).json({ message: 'Logged out successfully' });
+};
+
+// Update User
+export const updateUser = async (req, res) => {
+    const { id } = req.params;
+
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid User ID" });
     }
 
     try {
-        // Get user data from the database based on the email
-        const user = await User.findOne({ email });
-
-        // If user does not exist, send error
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
         }
-
-        // Compare the entered password with the hashed password in the database
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        // If password does not match, send error
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
-
-        // Generate JWT Token
-        const token = jwt.sign(
-            { id: user._id, email: user.email },
-            process.env.JWT_SECRET || 'defaultSecretKey',
-            { expiresIn: '1h' } // Token expires in 1 hour
-        );
-
-        // Send success response with token
-        return res.status(200).json({
-            message: 'Login successful',
-            token,
-            user: { id: user._id, email: user.email }
-        });
-
+        res.status(200).json({ message: "User updated successfully", updatedUser });
     } catch (error) {
-        return res.status(500).json({ message: 'Error logging in', error });
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
+
+export const deleteUser = async (req, res) => {
+    const { id } = req.params;
+
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid User ID" });
+    }
+
+    try {
+        const deletedUser = await User.findByIdAndDelete(id);
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
