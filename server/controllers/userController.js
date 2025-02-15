@@ -87,6 +87,24 @@ export const updateUser = async (req, res) => {
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
+// Patch User (Partial Update)
+export const patchUser = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid User ID" });
+    }
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(id, { $set: req.body }, { new: true, runValidators: true });
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({ message: "User updated successfully", updatedUser });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
 
 // Delete User
 export const deleteUser = async (req, res) => {
@@ -106,3 +124,5 @@ export const deleteUser = async (req, res) => {
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
+
+
