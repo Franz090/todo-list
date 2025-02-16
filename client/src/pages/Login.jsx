@@ -22,7 +22,7 @@ export default function Login() {
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form className="space-y-4" onSubmit={handleLoginSubmit}>
           {/* Email Input */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>

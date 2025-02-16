@@ -13,7 +13,14 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
+// Middleware - Configure CORS properly
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:3000", // Allow frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE","PATCH"], // Allowed HTTP methods
+  credentials: true, // Allow cookies & authentication headers
+  allowedHeaders: ["Content-Type", "Authorization"] // Allow specific headers
+}));
+
 app.use(express.json());
 app.use(cookieParser()); // Added for token handling
 

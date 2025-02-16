@@ -2,12 +2,13 @@ import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 export default function Register() {
-  const {firstName, setFirstName,
-    lastName, setLastName,
-    email, setEmail,
-    password, setPassword,
-    confirmPassword, setConfirmPassword,
-    error, handleRegisterSubmit
+  const { 
+    firstName, setFirstName, 
+    lastName, setLastName, 
+    email, setEmail, 
+    password, setPassword, 
+    confirmPassword, setConfirmPassword, 
+    error, loading, handleRegisterSubmit 
   } = useAuth();
 
   return (
@@ -15,104 +16,88 @@ export default function Register() {
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-6">Register</h1>
 
-        <form className="space-y-4" onSubmit={handleRegisterSubmit} >
-          {/* First Name Input */}
+        {error && <p className={`text-center ${error.includes("success") ? "text-green-500" : "text-red-500"}`}>{error}</p>}
+
+        <form className="space-y-4" onSubmit={handleRegisterSubmit}>
           <div>
             <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
             <input
               type="text"
               id="firstName"
-              name="firstName"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
             />
           </div>
 
-          {/* Last Name Input */}
           <div>
             <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
             <input
               type="text"
               id="lastName"
-              name="lastName"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
             />
           </div>
 
-          {/* Email Input */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
               id="email"
-              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
             />
           </div>
 
-          {/* Password Input */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
               id="password"
-              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
             />
           </div>
 
-          {/* Confirm Password Input */}
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
             <input
               type="password"
               id="confirmPassword"
-              name="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
             />
           </div>
 
-          {/* Submit Button */}
           <div>
-  {error && (
-    <div className={`text-center mt-2 ${error === "Passwords do not match!" ? "text-red-500" : "text-green-500"}`}>
-      {error}
-    </div>
-  )}
-  
-  <button
-    type="submit"
-    className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-  >
-    Register
-  </button>
-</div>
-
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-2 rounded-md"
+              disabled={loading}
+            >
+              {loading ? "Registering..." : "Register"}
+            </button>
+          </div>
         </form>
 
-        {/* Login Link */}
-        <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link to="/" className="text-indigo-600 hover:text-indigo-700 font-medium">
-              Login
-            </Link>
-          </p>
-        </div>
+        {/* ADD LOGIN LINK */}
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Already have an account? 
+          <Link to="/" className="text-indigo-600 font-semibold hover:underline ml-1">
+            Log in
+          </Link>
+        </p>
+
       </div>
     </div>
   );
