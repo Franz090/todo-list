@@ -1,87 +1,90 @@
-import { useState } from "react";
-import axios from "axios"; 
-import api from "../services/api"; 
-
-const API_URL = import.meta.env.VITE_API_URL;
-
+import { useState, useEffect } from "react";
+import api from "../services/api";
 
 const useAuth = () => {
-  // Login State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Para sa loading state
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [user, setUser] = useState(null);
 
-  // Register State
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Login Handler
+  // Fetch user data for Dashboard
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Unauthorized! Please log in.");
+  
+        setLoading(true);
+        const response = await api.get("/dashboard", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        console.log("Dashboard API Response:", response.data); // Debugging line
+        setUser(response.data.user);
+      } catch (err) {
+        console.error("Error fetching user:", err.response?.data || err.message); // Debugging line
+        setError(err.response?.data?.message || err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchUser();
+  }, []);
+  
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-  
+
     try {
-      const response = await api.post("/login", { email, password }); // Gumamit ng `api`
-      console.log("Login successful:", response.data);
+      const response = await api.post("/login", { email, password });
       localStorage.setItem("token", response.data.token);
-      setLoading(false);
-    } catch (error) {
-      console.error("Login failed:", error.response?.data?.message || error.message);
-      setError(error.response?.data?.message || "Login failed!");
+      window.location.href = "/dashboard"; // Redirect to dashboard
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed!");
+    } finally {
       setLoading(false);
     }
   };
-  
 
-  // Register Handler
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setError("All fields are required!");
       return;
     }
-  
+
     if (password !== confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
-  
+
     setLoading(true);
-  
+
     try {
-      const response = await api.post("/register", { 
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmPassword,
-      });
-  
-      console.log("Registration successful:", response.data);
-      setError("Registration successful! Please login.");
-      setLoading(false);
-    } catch (error) {
-      console.error("Registration failed:", error.response?.data?.message || error.message);
-      setError(error.response?.data?.message || "Registration failed!");
+      await api.post("/register", { firstName, lastName, email, password });
+      setEmail(""); setPassword(""); setFirstName(""); setLastName(""); setConfirmPassword("");
+      window.location.href = "/";
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed!");
+    } finally {
       setLoading(false);
     }
   };
-  
+
   return {
-    email, setEmail,
-    password, setPassword,
-    firstName, setFirstName,
-    lastName, setLastName,
-    confirmPassword, setConfirmPassword,
-    error, setError,
-    loading,
-    handleLoginSubmit,
-    handleRegisterSubmit,
+    email, setEmail, password, setPassword, firstName, setFirstName,
+    lastName, setLastName, confirmPassword, setConfirmPassword, error, loading, user,
+    handleLoginSubmit, handleRegisterSubmit
   };
 };
 

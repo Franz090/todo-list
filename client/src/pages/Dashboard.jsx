@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
+import useAuth from "../hooks/useAuth";
 
-export default function Dashboard() {
-  const [user, setUser] = useState(null);
+const Dashboard = () => {
+  const { user, loading, error } = useAuth();
 
-  useEffect(() => {
-    fetch("http://localhost:5000/dashboard", { credentials: "include" }) // Fetch user data from backend
-      .then((res) => res.json())
-      .then((data) => setUser(data.user))
-      .catch((err) => console.error("Error fetching dashboard data:", err));
-  }, []);
+  if (loading) return <p>Loading dashboard...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold">Welcome to the Dashboard</h1>
-      {user ? <p>Hello, {user.name}!</p> : <p>Loading...</p>}
+    <div>
+      <h1>Welcome to the Dashboard!</h1>
+      {user && (
+        <div>
+          <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
+          <p><strong>Email:</strong> {user.email}</p>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default Dashboard;
