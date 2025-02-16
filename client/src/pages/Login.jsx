@@ -5,24 +5,12 @@ export default function Login() {
   const { email, setEmail, password, setPassword, handleLoginSubmit } = useAuthContext();
   const navigate = useNavigate(); // <-- Import useNavigate
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Example condition: check if email and password are valid
-    if (email === "test@example.com" && password === "password123") {
-      console.log("Login successful!");
-      navigate("/home"); // <-- Redirect to Home page
-    } else {
-      console.log("Invalid email or password");
-    }
-  };
-
-  return (
+  return ( 
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
-        <form className="space-y-4" onSubmit={handleLoginSubmit}>
+        <form className="space-y-4" onSubmit={(e) => handleLoginSubmit(e, navigate)}>
           {/* Email Input */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>

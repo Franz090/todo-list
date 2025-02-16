@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Home from '../pages/Home';
+import Dashboard from "../pages/Dashboard"; 
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Register from "../pages/Register";
@@ -9,7 +9,7 @@ const Routers = () => {
     <Routes>
       <Route path="/" element={<Login />} />  
       <Route path="/register" element={<Register />} />
-      <Route path="/home" element={<Home />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
