@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios"; 
+import api from "../services/api"; 
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 
@@ -20,15 +22,11 @@ const useAuth = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+  
     try {
-      const response = await axios.post(`${API_URL}/login`, {
-        email,
-        password,
-      });
-
+      const response = await api.post("/login", { email, password }); // Gumamit ng `api`
       console.log("Login successful:", response.data);
-      localStorage.setItem("token", response.data.token); // Save token in localStorage
+      localStorage.setItem("token", response.data.token);
       setLoading(false);
     } catch (error) {
       console.error("Login failed:", error.response?.data?.message || error.message);
@@ -36,13 +34,13 @@ const useAuth = () => {
       setLoading(false);
     }
   };
+  
 
   // Register Handler
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setError("");
   
-    // Check if all fields are filled
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setError("All fields are required!");
       return;
@@ -56,12 +54,12 @@ const useAuth = () => {
     setLoading(true);
   
     try {
-      const response = await axios.post(`${API_URL}/register`, {
+      const response = await api.post("/register", { 
         firstName,
         lastName,
         email,
         password,
-        confirmPassword
+        confirmPassword,
       });
   
       console.log("Registration successful:", response.data);
@@ -73,6 +71,7 @@ const useAuth = () => {
       setLoading(false);
     }
   };
+  
   return {
     email, setEmail,
     password, setPassword,
